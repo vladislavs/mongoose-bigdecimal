@@ -2,15 +2,15 @@
 
 //dependencies
 
-var BigDecimal = require('big.js');
+var Big = require('big.js');
 var mongoose = require('mongoose');
 var SchemaType = mongoose.SchemaType;
 var CastError = SchemaType.CastError;
 var errorMessages = mongoose.Error.messages;
 
 //override valueOf to return javascript Number than string
-var valueOf = BigDecimal.prototype.valueOf;
-BigDecimal.prototype.valueOf = function() {
+var valueOf = Big.prototype.valueOf;
+Big.prototype.valueOf = function() {
     return Number(valueOf.call(this));
 };
 
@@ -39,7 +39,7 @@ SchemaBigDecimal.schemaName = 'BigDecimal';
  * @description inherits from mongoose SchemaType
  */
 SchemaBigDecimal.prototype = Object.create(SchemaType.prototype);
-SchemaBigDecimal.prototype.constructor = BigDecimal;
+SchemaBigDecimal.prototype.constructor = Big;
 
 
 /**
@@ -51,7 +51,7 @@ SchemaBigDecimal.prototype.constructor = BigDecimal;
  * @private
  */
 SchemaBigDecimal.prototype.checkRequired = function checkRequired(value) {
-    return (value !== null) && (value instanceof BigDecimal);
+    return (value !== null) && (value instanceof Big);
 };
 
 
@@ -94,7 +94,7 @@ SchemaBigDecimal.prototype.min = function(value, message) {
 /**
  * @function
  * @description sets a maximum bigdecimal validator
- * @param {BigDecimal} value maximum bigdecimal allowed
+ * @param {Big} value maximum bigdecimal allowed
  * @param {String} [message] optional custom error message
  * @return {SchemaBigDecimal} this
  * @see Customized Error Messages #error_messages_MongooseError-messages
@@ -148,14 +148,14 @@ SchemaBigDecimal.prototype.cast = function(value /*,doc , init*/ ) {
     }
 
     //is bigdecimal
-    if (value instanceof BigDecimal) {
+    if (value instanceof Big) {
         return value;
     }
 
     //is number or string
     if ((typeof value === 'string') || (typeof value === 'number')) {
         try {
-            return new BigDecimal(value);
+            return new Big(value);
         } catch (e) {
             throw new CastError('BigDecimal', value, this.path);
         }
